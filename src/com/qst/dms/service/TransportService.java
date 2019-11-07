@@ -1,5 +1,4 @@
-﻿package com.qst.dms.service;
-
+package com.qst.dms.service;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
@@ -81,7 +80,5 @@ public class TransportService {
 			}
 		}
 	}
-	
-	}
-	
+
 }

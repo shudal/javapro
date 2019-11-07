@@ -1,4 +1,3 @@
-﻿
 package com.qst.dms.entity;
 
 import java.io.Serializable;
@@ -28,7 +27,7 @@ public class DataBase implements Serializable{
 		return id;
 	}
 
-	
+
 	public void setId(int id) {
 		this.id = id;
 	}
@@ -38,7 +37,7 @@ public class DataBase implements Serializable{
 		return time;
 	}
 
-	
+
 	public void setTime(Date time) {
 		this.time = time;
 	}
@@ -48,7 +47,7 @@ public class DataBase implements Serializable{
 		return address;
 	}
 
-	
+
 	public void setAddress(String address) {
 		this.address = address;
 	}

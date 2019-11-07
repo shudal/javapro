@@ -1,4 +1,3 @@
-﻿
 package com.qst.dms.entity;
 
 import java.io.Serializable;

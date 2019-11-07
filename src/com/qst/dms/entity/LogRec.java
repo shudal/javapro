@@ -1,4 +1,3 @@
-﻿
 package com.qst.dms.entity;
 
 import java.io.Serializable;
@@ -23,7 +22,7 @@ public class LogRec extends DataBase implements Serializable{
 	 */
     public static final int LOG_IN=1;
     public static final int LOG_OUT=0;
-    
+
 	public String getUser() {
 		return user;
 	}
@@ -45,7 +44,7 @@ public class LogRec extends DataBase implements Serializable{
 		return logType;
 	}
 
-	
+
 	public void setLogType(int logType) {
 		this.logType = logType;
 	}
@@ -59,7 +58,7 @@ public class LogRec extends DataBase implements Serializable{
 		this.ip=ip;
 		this.logType=logType;
 	}
-	
+
 	public String toString() {
 		return this.getId() + "," +this.getTime() + "," +this.getAddress() + "," + this.getType() + ","+user+","+ip+","+logType;
 	}

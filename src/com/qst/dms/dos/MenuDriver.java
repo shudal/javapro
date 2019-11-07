@@ -34,9 +34,8 @@ public class MenuDriver {
 
 		try {
 			while (true) {
-				// 输出菜单界面，待补充 
-				//...
-
+				// 输出菜单界面，待补充
+                printMenu();
 				// 提示用户输入要操作的菜单项
 				System.out.println("请输入菜单项（0~5）：");
 
@@ -51,9 +50,8 @@ public class MenuDriver {
 					if (type == 1) {
 						System.out.println("正在采集日志数据，请输入正确信息，确保数据的正常采集！");
 						// 采集日志数据，待补充
-						//...
-						// 将采集的日志数据添加到logRecList集合中，待补充
-						//...
+                        logRecList.add(logService.inputLog());
+                        // 将采集的日志数据添加到logRecList集合中，待补充
 					} else if (type == 2) {
 						System.out.println("正在采集物流数据，请输入正确信息，确保数据的正常采集！");
 						// 采集物流数据
@@ -70,11 +68,12 @@ public class MenuDriver {
 					if (type == 1) {
 						System.out.println("正在日志数据过滤匹配...");
 						// 创建日志数据分析对象，待补充
-						//...
-						// 日志数据过滤，待补充
-						//...
+				        LogRecAnalyse logAn = new LogRecAnalyse(logRecList);
+                        // 日志数据过滤，待补充
+                        logAn.doFilter();
 						// 日志数据分析，待补充
-						//...
+                        matchedLogs = logAn.matchData();
+                        System.out.println("日志数据过滤匹配完成");
 					} else if (type == 2) {
 						System.out.println("正在物流数据过滤匹配...");
 						// 创建物流数据分析对象
@@ -94,7 +93,11 @@ public class MenuDriver {
 				case 4: {
 					System.out.println("显示匹配的数据：");
 					//从日志匹配集合中判断匹配的日志记录，并输出匹配的日志信息，待补充
-					//...
+                    if (matchedLogs == null || matchedLogs.size() == 0) {
+                        System.out.println("匹配的日志记录是0条！");
+                    } else {
+                        logService.showMatchLog(matchedLogs);
+                    }
 					//从物流匹配集合中判断匹配的物流记录
 					if (matchedTrans == null || matchedTrans.size() == 0) {
 						System.out.println("匹配的物流记录是0条！");
@@ -119,4 +122,12 @@ public class MenuDriver {
 			System.out.println("输入的数据不合法！");
 		}
 	}
+    public static void printMenu() {
+        String gapStr = "**********";
+        System.out.println(gapStr);
+        System.out.println("*1.数据采集    2.数据匹配*");
+        System.out.println("*3.数据记录    4.数据显示*");
+        System.out.println("*5.数据发送    0.退出影院*");
+        System.out.println(gapStr);
+    }
 }

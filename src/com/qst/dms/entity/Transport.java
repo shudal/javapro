@@ -1,7 +1,3 @@
-/**   
- * @公司   青软实训QST
- * @作者 zhaokl
- */
 package com.qst.dms.entity;
 
 import java.io.Serializable;
