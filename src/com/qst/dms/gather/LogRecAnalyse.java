@@ -47,7 +47,7 @@ public class LogRecAnalyse extends DataFilter implements IDataAnalyse {
 		for (LogRec in : logIns) {
 			for (LogRec out : logOuts) {
 				if ((in.getUser().equals(out.getUser()))
-						&& (in.getIp().equals(out.getIp()))) {
+						&& (in.getAddress().equals(out.getAddress()))) {
 					// 修改in和out日志状态类型为“匹配”
 					in.setType(DataBase.MATHCH);
 					out.setType(DataBase.MATHCH);

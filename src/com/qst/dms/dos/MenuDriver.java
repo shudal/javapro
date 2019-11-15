@@ -88,11 +88,26 @@ public class MenuDriver {
 				}
 					break;
 				case 3:
-					System.out.println("数据记录 中...");
+                    System.out.println("请输入保存数据类型：1. 日志    2.物流");
+					int type = scanner.nextInt();
+                    if (type == 1) {
+                        logService.saveMatchLog(matchedLogs);
+                    } else if (type == 2) {
+                        tranService.saveMatchedTransport(matchedTrans);
+                    }
+                    System.out.println("数据记录 中...");
 					break;
 				case 4: {
 					System.out.println("显示匹配的数据：");
-					//从日志匹配集合中判断匹配的日志记录，并输出匹配的日志信息，待补充
+                    ArrayList<MatchedTransport> matchTransports = new ArrayList<>();
+                    matchTransports= tranService.readMatchedTransport();
+                    tranService.showMatchTransport(matchTransports);
+
+                    ArrayList<MatchedLogRec> matchLogs = new ArrayList<>();
+                    matchLogs = logService.readMatchLog();
+                    logService.showMatchLog(matchLogs);
+                    /*
+                    //从日志匹配集合中判断匹配的日志记录，并输出匹配的日志信息，待补充
                     if (matchedLogs == null || matchedLogs.size() == 0) {
                         System.out.println("匹配的日志记录是0条！");
                     } else {
@@ -105,6 +120,7 @@ public class MenuDriver {
 						// 输出匹配的物流信息
 						tranService.showMatchTransport(matchedTrans);
 					}
+                    */
 				}
 					break;
 				case 5:
@@ -119,6 +135,7 @@ public class MenuDriver {
 
 			}
 		} catch (Exception e) {
+            e.printStackTrace();
 			System.out.println("输入的数据不合法！");
 		}
 	}

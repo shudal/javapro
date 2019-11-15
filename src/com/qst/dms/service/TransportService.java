@@ -80,5 +80,36 @@ public class TransportService {
 			}
 		}
 	}
-
+    public void saveMatchedTransport(ArrayList<MatchedTransport> m2) {
+        ArrayList<MatchedTransport> matchTrans = readMatchedTransport();
+        if (matchTrans != null) {
+            matchTrans.addAll(m2);
+        } else {
+            matchTrans = m2;
+        }
+        try (ObjectOutputStream obs = new ObjectOutputStream(new FileOutputStream("MatchedTransports.txt", false))) {
+            for (MatchedTransport e : matchTrans) {
+                if (e != null) {
+                    obs.writeObject(e);
+                    obs.flush();
+                }
+            }
+            obs.writeObject(null);
+            obs.flush();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    public ArrayList<MatchedTransport> readMatchedTransport() {
+        ArrayList<MatchedTransport> matchTrans = new ArrayList<>();
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("MatchedTransports.txt"))) {
+            MatchedTransport matchTran;
+            while ((matchTran = (MatchedTransport) ois.readObject()) != null) {
+                matchTrans.add(matchTran);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return matchTrans;
+    }
 }

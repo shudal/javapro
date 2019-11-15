@@ -78,5 +78,36 @@ public class LogRecService {
 			}
 		}
 	}
-
+    public void saveMatchLog(ArrayList<MatchedLogRec> m2) {
+        ArrayList<MatchedLogRec> matchLogs = readMatchLog();
+        if (matchLogs != null) {
+            matchLogs.addAll(m2);
+        } else {
+            matchLogs = m2;
+        }
+        try (ObjectOutputStream obs = new ObjectOutputStream(new FileOutputStream("MatchedLogs.txt", false))) {
+            for (MatchedLogRec e : matchLogs) {
+                if (e != null) {
+                    obs.writeObject(e);
+                    obs.flush();
+                }
+            }
+            obs.writeObject(null);
+            obs.flush();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    public ArrayList<MatchedLogRec> readMatchLog() {
+        ArrayList<MatchedLogRec> matchLogs = new ArrayList<>();
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("MatchedLogs.txt"))) {
+            MatchedLogRec matchLog;
+            while ((matchLog = (MatchedLogRec) ois.readObject()) != null) {
+                matchLogs.add(matchLog);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return matchLogs;
+    }
 }
