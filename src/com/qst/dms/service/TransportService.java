@@ -6,11 +6,14 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Scanner;
+import java.sql.Timestamp;
+import java.sql.ResultSet;
 
 import com.qst.dms.entity.DataBase;
 import com.qst.dms.entity.MatchedLogRec;
 import com.qst.dms.entity.MatchedTransport;
 import com.qst.dms.entity.Transport;
+import com.qst.dms.db.DBUtil;
 
 public class TransportService {
 	// 物流数据采集
@@ -111,5 +114,61 @@ public class TransportService {
             e.printStackTrace();
         }
         return matchTrans;
+    }
+    public void saveMatchTransportToDB(ArrayList<MatchedTransport> matchTrans) {
+        DBUtil db = new DBUtil();
+        try {
+            db.getConnection();
+            for (MatchedTransport matchedTransport : matchTrans) {
+                Transport send = matchedTransport.getSend();
+                Transport trans = matchedTransport.getTrans();
+                Transport receive = matchedTransport.getReceive();
+                String sql = "insert into gather_transport(id, time, address, type, handler, reciver, transporttype) values (?,?,?,?,?,?,?)";
+                Object[] param = new Object[] {
+                    send.getId(), new Timestamp(send.getTime().getTime()),send.getAddress(),send.getType(),send.getHandler(),send.getReciver(),send.getTransportType()
+                };
+                db.executeUpdate(sql, param);
+                param          = new Object[] {
+                    trans.getId(), new Timestamp(trans.getTime().getTime()),trans.getAddress(),trans.getType(),trans.getHandler(),trans.getReciver(),trans.getTransportType()
+                };
+                db.executeUpdate(sql, param);
+                param          = new Object[] {
+                    receive.getId(), new Timestamp(receive.getTime().getTime()),receive.getAddress(),receive.getType(),receive.getHandler(),receive.getReciver(),receive.getTransportType()
+                };
+                db.executeUpdate(sql, param);
+                sql = "insert into matched_transport(sendid, transid,receiveid) values (?,?,?)";
+                param = new Object[] {
+                    send.getId(),trans.getId(),receive.getId()
+                };
+                db.executeUpdate(sql, param);
+            }
+            db.closeAll();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    public ArrayList<MatchedTransport> readMatchedTransportFromDB() {
+        ArrayList<MatchedTransport> matchedTransports = new ArrayList<MatchedTransport>();
+        DBUtil db = new DBUtil();
+        try {
+            db.getConnection();
+            String sql = "select s.id, s.time, s.address, s.type, s.handler, s.reciver, s.transporttype,";
+            sql       += "       t.id, t.time, t.address, t.type, t.handler, t.reciver, t.transporttype,";
+            sql       += "       r.id, t.time, t.address, t.type, r.handler, r.reciver, r.transporttype ";
+            sql += " from matched_transport m, gather_transport s, gather_transport t, gather_transport r ";
+            sql += " where m.sendid=s.id and m.transid=t.id and m.receiveid=r.id ";
+            ResultSet rs = db.executeQuery(sql, null);
+            while (rs.next()) {
+                Transport send    = new Transport(rs.getInt(1), rs.getDate(2), rs.getString(3), rs.getInt(4), rs.getString(5), rs.getString(6), rs.getInt(7));
+                Transport trans   = new Transport(rs.getInt(8), rs.getDate(9), rs.getString(10),rs.getInt(11),rs.getString(12),rs.getString(13),rs.getInt(14));
+                Transport receive = new Transport(rs.getInt(15),rs.getDate(16),rs.getString(17),rs.getInt(18),rs.getString(19),rs.getString(20),rs.getInt(21));
+                MatchedTransport matchedTrans = new MatchedTransport(send, trans, receive);
+                matchedTransports.add(matchedTrans);
+            }
+            db.closeAll();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return matchedTransports;
     }
 }

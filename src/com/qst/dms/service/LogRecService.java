@@ -6,10 +6,13 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Scanner;
+import java.sql.Timestamp;
+import java.sql.ResultSet;
 
 import com.qst.dms.entity.DataBase;
 import com.qst.dms.entity.LogRec;
 import com.qst.dms.entity.MatchedLogRec;
+import com.qst.dms.db.DBUtil;
 
 //日志业务类
 public class LogRecService {
@@ -109,5 +112,57 @@ public class LogRecService {
             e.printStackTrace();
         }
         return matchLogs;
+    }
+
+    public void saveMatchLogToDB (ArrayList<MatchedLogRec> matchLogs) {
+        DBUtil db = new DBUtil();
+        try {
+            db.getConnection();
+            for (MatchedLogRec matchedLogRec : matchLogs) {
+                LogRec login = matchedLogRec.getLogin();
+                LogRec logout = matchedLogRec.getLogout();
+                String sql = "insert into gather_logrec(id,time,address,type,username,ip,logtype) values (?,?,?,?,?,?,?)";
+                Object[] param = new Object[] {
+                    login.getId(),new Timestamp(login.getTime().getTime()),
+                    login.getAddress(), login.getType(), login.getUser(),
+                    login.getIp(), login.getLogType()
+                };
+                db.executeUpdate(sql, param);
+                param = new Object[] {
+                    logout.getId(),new Timestamp(logout.getTime().getTime()),
+                    logout.getAddress(), logout.getType(), logout.getUser(),
+                    logout.getIp(), logout.getLogType()
+                };
+                db.executeUpdate(sql, param);
+
+                sql = "insert into matched_logrec(loginid, logoutid) values (?, ?)";
+                param = new Object[] {login.getId(), logout.getId()};
+                db.executeUpdate(sql, param);
+            }
+            db.closeAll();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    public ArrayList<MatchedLogRec> readMatchedLogFromDB() {
+        ArrayList<MatchedLogRec> matchedLogRecs = new ArrayList<MatchedLogRec>();
+        DBUtil db = new DBUtil();
+        try {
+            db.getConnection();
+            String sql = "select i.id, i.time, i.address, i.type, i.username, i.ip, i.logtype, ";
+            sql +=              "o.id, o.time, o.address, o.type, o.username, o.ip, o.logtype ";
+            sql += " from matched_logrec m, gather_logrec i, gather_logrec o where m.loginid=i.id and m.logoutid=o.id";
+            ResultSet rs = db.executeQuery(sql, null);
+            while (rs.next()) {
+                LogRec login  = new LogRec(rs.getInt(1), rs.getDate(2), rs.getString(3), rs.getInt(4), rs.getString(5), rs.getString(6), rs.getInt(7));
+                LogRec logout = new LogRec(rs.getInt(8), rs.getDate(9), rs.getString(10),rs.getInt(11),rs.getString(12),rs.getString(13),rs.getInt(14));
+                MatchedLogRec matchedLog = new MatchedLogRec(login, logout);
+                matchedLogRecs.add(matchedLog);
+            }
+            db.closeAll();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return matchedLogRecs;
     }
 }
