@@ -6,8 +6,10 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Scanner;
-import java.sql.Timestamp;
+import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.Statement;
+import java.sql.Timestamp; 
 
 import com.qst.dms.entity.DataBase;
 import com.qst.dms.entity.MatchedLogRec;
@@ -171,4 +173,21 @@ public class TransportService {
         }
         return matchedTransports;
     }
+	//获取数据库中的所有匹配的物流信息，返回一个ResultSet
+	public ResultSet readTransResult() {		
+		DBUtil db = new DBUtil();
+		ResultSet rs=null;
+		try {
+			// 获取数据库链接
+			Connection conn=db.getConnection();
+			// // 查询匹配物流，设置ResultSet可以使用除了next()之外的方法操作结果集
+			Statement st=conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE);
+			
+			String sql = "SELECT * from gather_transport";
+			rs = st.executeQuery(sql);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return rs;
+	}
 }
