@@ -125,19 +125,19 @@ public class TransportService {
                 Transport send = matchedTransport.getSend();
                 Transport trans = matchedTransport.getTrans();
                 Transport receive = matchedTransport.getReceive();
-                String sql = "insert into gather_transport(id, time, address, type, handler, reciver, transporttype) values (?,?,?,?,?,?,?)";
+                String sql = "insert into gather_transport(time, address, type, handler, reciver, transporttype) values (?,?,?,?,?,?)";
                 Object[] param = new Object[] {
-                    send.getId(), new Timestamp(send.getTime().getTime()),send.getAddress(),send.getType(),send.getHandler(),send.getReciver(),send.getTransportType()
+                    new Timestamp(send.getTime().getTime()),send.getAddress(),send.getType(),send.getHandler(),send.getReciver(),send.getTransportType()
                 };
-                db.executeUpdate(sql, param);
+                send.setId(db.executeSQLAndReturnPrimaryKey(sql, param));
                 param          = new Object[] {
-                    trans.getId(), new Timestamp(trans.getTime().getTime()),trans.getAddress(),trans.getType(),trans.getHandler(),trans.getReciver(),trans.getTransportType()
+                    new Timestamp(trans.getTime().getTime()),trans.getAddress(),trans.getType(),trans.getHandler(),trans.getReciver(),trans.getTransportType()
                 };
-                db.executeUpdate(sql, param);
+                trans.setId(db.executeSQLAndReturnPrimaryKey(sql, param));
                 param          = new Object[] {
-                    receive.getId(), new Timestamp(receive.getTime().getTime()),receive.getAddress(),receive.getType(),receive.getHandler(),receive.getReciver(),receive.getTransportType()
+                    new Timestamp(receive.getTime().getTime()),receive.getAddress(),receive.getType(),receive.getHandler(),receive.getReciver(),receive.getTransportType()
                 };
-                db.executeUpdate(sql, param);
+                receive.setId(db.executeSQLAndReturnPrimaryKey(sql, param));
                 sql = "insert into matched_transport(sendid, transid,receiveid) values (?,?,?)";
                 param = new Object[] {
                     send.getId(),trans.getId(),receive.getId()

@@ -78,6 +78,8 @@ public class MainFrametest2 extends JFrame {
 	private LogRecService logRecService;
 	// 声明物流业务对象
 	private TransportService transportService;
+	
+	private int flush = 0;
 
 	// 构造方法
 	public MainFrametest2() {
@@ -95,7 +97,7 @@ public class MainFrametest2 extends JFrame {
 		matchedTrans = new ArrayList<MatchedTransport>();
 		logRecService = new LogRecService();
 		transportService = new TransportService();
-
+		
 		// 初始化菜单
 		initMenu();
 		// 初始化工具栏
@@ -131,6 +133,19 @@ public class MainFrametest2 extends JFrame {
 		this.setLocationRelativeTo(null);
 		// 设置默认的关闭按钮操作为退出程序
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+		
+		new Thread(()->{
+			while (true) {
+				showPane.removeAll(); 
+				flushMatchedLogTable(); 
+				flushMatchedTransTable();
+				try {
+					Thread.sleep(2 * 1000);
+				} catch (Exception e2){
+					e2.printStackTrace();
+				}
+			}
+		}).start();
 	}
 
 	// 初始化菜单的方法
@@ -268,11 +283,12 @@ public class MainFrametest2 extends JFrame {
 			pLogId.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 
 			lblLogId = new JLabel("日志ID：");
-			pLogId.add(lblLogId);
+			/*pLogId.add(lblLogId);
 
 			txtLogId = new JTextField();
 			txtLogId.setPreferredSize(new Dimension(100, 20));
 			pLogId.add(txtLogId);
+			*/
 
 			pName = new JPanel();
 			pLog.add(pName);
@@ -346,11 +362,12 @@ public class MainFrametest2 extends JFrame {
 		pTran.add(pTransId);
 
 		lblTransId = new JLabel("物流ID：");
-		pTransId.add(lblTransId);
+		/*pTransId.add(lblTransId);
 
 		txtTransId = new JTextField();
 		txtTransId.setPreferredSize(new Dimension(100, 20));
 		pTransId.add(txtTransId);
+		*/
 
 		pAdress = new JPanel();
 		pTran.add(pAdress);
@@ -418,7 +435,7 @@ public class MainFrametest2 extends JFrame {
 		// 数据采集的事件处理方法
 		public void actionPerformed(ActionEvent e) {
 			// 获取日志ID
-			int id = Integer.parseInt(txtLogId.getText().trim());
+			// int id = Integer.parseInt(txtLogId.getText().trim());
 			// 创建当前时间
 			Date time = new Date();
 			// 获取地址栏地址
@@ -432,7 +449,8 @@ public class MainFrametest2 extends JFrame {
 			// 设置日志类型
 			int logType = rbLogin.isSelected() ? LogRec.LOG_IN : LogRec.LOG_OUT;
 			// 将数据封装到日志对象
-			log = new LogRec(id, time, adress, type, user, ip, logType);
+			// log = new LogRec(id, time, adress, type, user, ip, logType);
+			log = new LogRec(time, adress, type, user, ip, logType);
 			// 将日志对象添加到日志列表
 			logList.add(log);
 			System.out.println(logList);
@@ -447,7 +465,7 @@ public class MainFrametest2 extends JFrame {
 		// 数据采集的事件处理方法
 		public void actionPerformed(ActionEvent e) {
 			// 获取物流ID
-			int id = Integer.parseInt(txtTransId.getText().trim());
+			//int id = Integer.parseInt(txtTransId.getText().trim());
 			// 创建当前时间
 			Date time = new Date();
 			// 获取地址栏地址
@@ -461,8 +479,8 @@ public class MainFrametest2 extends JFrame {
 			// 设置物流类型
 			int transportType = cmbTanStatus.getSelectedIndex() + 1;
 			// 将数据包装成物流对象
-			trans = new Transport(id, time, adress, type, handler, reciver,
-					transportType);
+			// trans = new Transport(id, time, adress, type, handler, reciver,transportType);
+			trans = new Transport(time, adress, type, handler, reciver,transportType);
 			// 将物流对象放入物流列表
 			transList.add(trans);
 			// 显示对话框
@@ -522,11 +540,15 @@ public class MainFrametest2 extends JFrame {
 			//若保存成功，弹出提示框：匹配的日志数据以保存到文件和数据库中！",
 			//若没有保存成功，则弹出相应的告警提示框 
 			logRecService.saveMatchLogToDB(matchedLogs);
+			JOptionPane.showMessageDialog(null, "匹配的日志数据以保存到文件和数据库中！", "提示", JOptionPane.INFORMATION_MESSAGE);
+			//补充物流数据匹配的事件处理方法
 						
 			// 保存匹配的物流信息
 			//若保存成功，弹出提示框：匹配的物流数据以保存到文件和数据库中！",
 			//若没有保存成功，则弹出相应的告警提示框
 			transportService.saveMatchTransportToDB(matchedTrans);
+			JOptionPane.showMessageDialog(null, "匹配的物流数据以保存到文件和数据库中！", "提示", JOptionPane.INFORMATION_MESSAGE);
+			
 		}
 	}
 
@@ -539,11 +561,14 @@ public class MainFrametest2 extends JFrame {
 			// 切换主面板的卡片为显示数据的面板
 			card.show(p, "show");
 			// 移除显示数据面板中的所有的选项卡
+
+			/*
 			showPane.removeAll();
 			// 刷新日志信息表
 			flushMatchedLogTable();
 			// 刷新物流信息表
 			flushMatchedTransTable();
+			*/
 		}
 	}
 

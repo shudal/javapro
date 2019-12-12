@@ -1,4 +1,10 @@
 alias javac="javac -encoding utf8 "
+javac -d . entity/DataBase.java
+javac -d . entity/LogRec.java
+javac -d . entity/Transport.java
+
+javac -d . db/DBUtil.java
+
 javac -d . service/LogRecService.java
 
 javac -d . entity/User.java

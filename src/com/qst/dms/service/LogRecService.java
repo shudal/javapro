@@ -127,19 +127,19 @@ public class LogRecService {
             for (MatchedLogRec matchedLogRec : matchLogs) {
                 LogRec login = matchedLogRec.getLogin();
                 LogRec logout = matchedLogRec.getLogout();
-                String sql = "insert into gather_logrec(id,time,address,type,username,ip,logtype) values (?,?,?,?,?,?,?)";
+                String sql = "insert into gather_logrec(time,address,type,username,ip,logtype) values (?,?,?,?,?,?)";
                 Object[] param = new Object[] {
-                    login.getId(),new Timestamp(login.getTime().getTime()),
+                    new Timestamp(login.getTime().getTime()),
                     login.getAddress(), login.getType(), login.getUser(),
                     login.getIp(), login.getLogType()
                 };
-                db.executeUpdate(sql, param);
+                login.setId(db.executeSQLAndReturnPrimaryKey(sql, param));
                 param = new Object[] {
-                    logout.getId(),new Timestamp(logout.getTime().getTime()),
+                    new Timestamp(logout.getTime().getTime()),
                     logout.getAddress(), logout.getType(), logout.getUser(),
                     logout.getIp(), logout.getLogType()
                 };
-                db.executeUpdate(sql, param);
+                logout.setId(db.executeSQLAndReturnPrimaryKey(sql, param));
 
                 sql = "insert into matched_logrec(loginid, logoutid) values (?, ?)";
                 param = new Object[] {login.getId(), logout.getId()};

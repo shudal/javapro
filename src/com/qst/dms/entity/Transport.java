@@ -59,6 +59,14 @@ public class Transport extends DataBase implements Serializable{
 		this.reciver = reciver;
 		this.transportType = transportType;
 	}
+	
+	public Transport(Date time, String address, int type,
+			String handler, String reciver, int transportType) {
+		super(time, address, type);
+		this.handler = handler;
+		this.reciver = reciver;
+		this.transportType = transportType;
+	}
 
 	public String toString() {
 		return this.getId() + "," + this.getTime() + "," + this.getAddress()

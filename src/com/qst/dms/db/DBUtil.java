@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.ResultSet;
 
 import com.qst.dms.util.Config;
 
@@ -107,10 +108,39 @@ public class DBUtil {
 			}
 			// 执行SQL语句
 			num = pstmt.executeUpdate();
+			System.out.println(num);
 		} catch (SQLException e) {
 			// 处理SQLException异常
 			e.printStackTrace();
 		}
 		return num;
+	}
+	public int executeSQLAndReturnPrimaryKey(String preparedSql, Object[] param) {
+		int num = 0;
+		// 处理SQL,执行SQL
+		try {
+			// 得到PreparedStatement对象
+			pstmt = conn.prepareStatement(preparedSql,PreparedStatement.RETURN_GENERATED_KEYS);
+			if (param != null) {
+				for (int i = 0; i < param.length; i++) {
+					// 为预编译sql设置参数
+					pstmt.setObject(i + 1, param[i]);
+				}
+			}
+			// 执行SQL语句
+			num = pstmt.executeUpdate();
+			ResultSet result = pstmt.getGeneratedKeys(); 
+			if (result.next()) {
+                // System.out.println("刚才添加的数据的自增长列值是：" + result.getInt(1)); 
+				return result.getInt(1);
+            } else {
+				System.out.println("result set 为空");
+			}
+			return -1;
+		} catch (SQLException e) {
+			// 处理SQLException异常
+			e.printStackTrace();
+		}
+		return -1;
 	}
 }

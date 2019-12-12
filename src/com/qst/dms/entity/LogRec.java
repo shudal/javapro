@@ -58,6 +58,13 @@ public class LogRec extends DataBase implements Serializable{
 		this.ip=ip;
 		this.logType=logType;
 	}
+	public LogRec(Date time, String address, int type,String user,String ip,int logType) {
+		super(time,address,type);
+		this.user=user;
+		this.ip=ip;
+		this.logType=logType;
+	}
+
 
 	public String toString() {
 		return this.getId() + "," +this.getTime() + "," +this.getAddress() + "," + this.getType() + ","+user+","+ip+","+logType;

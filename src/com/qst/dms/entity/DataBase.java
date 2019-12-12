@@ -70,6 +70,13 @@ public class DataBase implements Serializable{
 		this.address = address;
 		this.type = type;
 	}
+	public DataBase(Date time, String address, int type) {
+		// this.id = id;
+		this.time = time;
+		this.address = address;
+		this.type = type;
+	}
+
 
 
 	public String toString() {
